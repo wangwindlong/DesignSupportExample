@@ -8,7 +8,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -25,6 +24,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private ViewPager mViewPager;
     private TabPagerAdapter mAdapter;
     private AppBarLayout appBarLayout;
+    private View bigView;
+    private View searchView;
+    private View barView;
+    private float maxHeight;
 
     ///////////////////////////////////////
     // LIFE CYCLE
@@ -39,11 +42,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             setSupportActionBar(toolbar);
 
         }
-        final ActionBar ab = getSupportActionBar();
-        if(ab != null) {
-            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+        searchView = findViewById(R.id.search_iv);
+        barView = findViewById(R.id.include_toolbar_small);
+        bigView = findViewById(R.id.big_layout);
+        maxHeight = Utils.dpToPx(this, 100 - 50);
+        //添加
+//        final ActionBar ab = getSupportActionBar();
+//        if(ab != null) {
+//            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+//            ab.setDisplayHomeAsUpEnabled(true);
+//        }
 
         mAdapter = new TabPagerAdapter(this.getSupportFragmentManager());
         appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
@@ -103,7 +111,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+//        Log.d("wangyl", "onOffsetChanged maxHeight=" + maxHeight + ",verticalOffset=" + i);
         index = i;
+        float alpha = (maxHeight - Math.abs(i)) / maxHeight;
+        if (alpha <= 0) alpha = 0;
+        if (alpha > 1) alpha = 1;
+        bigView.setAlpha(alpha);
+        barView.setAlpha(1 - alpha);
+        searchView.setAlpha(alpha);
     }
 
     @Override
@@ -133,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
